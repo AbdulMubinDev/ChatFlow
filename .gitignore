@@ -10,6 +10,10 @@ lerna-debug.log*
 .next/
 out/
 
+# Python 
+venv/
+__pycache__/
+
 # Production builds
 build/
 dist/
