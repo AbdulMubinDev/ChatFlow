@@ -11,7 +11,7 @@ lerna-debug.log*
 out/
 
 # Python 
-venv/
+.venv/
 __pycache__/
 
 # Production builds
@@ -272,10 +272,10 @@ celerybeat-schedule
 .env
 .venv
 env/
-venv/
+.venv/
 ENV/
 env.bak/
-venv.bak/
+.venv.bak/
 
 # Spyder project settings
 .spyderproject
