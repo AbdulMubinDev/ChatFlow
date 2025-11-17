@@ -1,0 +1,208 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ChatFlow - Connect & Chat</title>
+    <link rel="stylesheet" href="{% static 'css/home/home.css' %}" />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="container">
+        <div class="nav-brand">
+          <h1>ChatFlow</h1>
+        </div>
+        <div class="nav-links">
+          <a href="#features">Features</a>
+          <a href="#about">About</a>
+          <a href="{% url 'login' %}" class="btn-login">Login</a>
+          <a href="{% url 'register' %}" class="btn-signup">Sign Up</a>
+        </div>
+        <div class="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <h1 class="hero-title">
+            Connect Instantly with <span class="highlight">ChatFlow</span>
+          </h1>
+          <p class="hero-subtitle">
+            Experience seamless real-time messaging with friends, family, and
+            colleagues. Chat smarter, connect faster.
+          </p>
+          <div class="hero-buttons">
+            <a href="{% url 'register' %}" class="btn btn-primary"
+              >Get Started</a
+            >
+            <a href="#features" class="btn btn-secondary">Learn More</a>
+          </div>
+        </div>
+        <div class="hero-image">
+          <div class="chat-illustration">
+            <div class="chat-bubble chat-bubble-1">
+              <p>Hey! How are you?</p>
+            </div>
+            <div class="chat-bubble chat-bubble-2">
+              <p>Great! Just using ChatFlow 🚀</p>
+            </div>
+            <div class="chat-bubble chat-bubble-3">
+              <p>It's amazing!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+      <div class="container">
+        <h2 class="section-title">Why Choose ChatFlow?</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Real-Time Messaging</h3>
+            <p>
+              Send and receive messages instantly with WebSocket technology for
+              lightning-fast communication.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>Secure & Private</h3>
+            <p>
+              Your conversations are encrypted and protected. Privacy and
+              security are our top priorities.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">👥</div>
+            <h3>Group Chats</h3>
+            <p>
+              Create groups, add members, and collaborate with teams or friends
+              in dedicated chat rooms.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>Responsive Design</h3>
+            <p>
+              Access ChatFlow from any device - desktop, tablet, or mobile.
+              Seamless experience everywhere.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🎨</div>
+            <h3>Rich Media Support</h3>
+            <p>
+              Share images, files, and emojis to make your conversations more
+              expressive and engaging.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🌐</div>
+            <h3>Always Online</h3>
+            <p>
+              Stay connected 24/7 with reliable cloud infrastructure and 99.9%
+              uptime guarantee.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+      <div class="container">
+        <div class="about-content">
+          <div class="about-text">
+            <h2>About ChatFlow</h2>
+            <p>
+              ChatFlow is a modern, intuitive chat application built with Django
+              and powered by cutting-edge real-time technology. Our mission is
+              to make communication simple, fast, and enjoyable for everyone.
+            </p>
+            <p>
+              Whether you're connecting with friends, coordinating with your
+              team, or staying in touch with family, ChatFlow provides the tools
+              you need for meaningful conversations.
+            </p>
+            <div class="stats">
+              <div class="stat">
+                <h3>100K+</h3>
+                <p>Active Users</p>
+              </div>
+              <div class="stat">
+                <h3>10M+</h3>
+                <p>Messages Sent</p>
+              </div>
+              <div class="stat">
+                <h3>99.9%</h3>
+                <p>Uptime</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+      <div class="container">
+        <h2>Ready to Start Chatting?</h2>
+        <p>
+          Join thousands of users who are already enjoying seamless
+          communication with ChatFlow.
+        </p>
+        <a href="{% url 'register' %}" class="btn btn-cta"
+          >Create Free Account</a
+        >
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <h3>ChatFlow</h3>
+            <p>Connecting people through seamless communication.</p>
+          </div>
+          <div class="footer-links">
+            <div class="footer-column">
+              <h4>Product</h4>
+              <a href="#features">Features</a>
+              <a href="#about">About</a>
+              <a href="#">Pricing</a>
+            </div>
+            <div class="footer-column">
+              <h4>Support</h4>
+              <a href="#">Help Center</a>
+              <a href="#">Contact Us</a>
+              <a href="#">Status</a>
+            </div>
+            <div class="footer-column">
+              <h4>Legal</h4>
+              <a href="#">Privacy Policy</a>
+              <a href="#">Terms of Service</a>
+              <a href="#">Cookie Policy</a>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2024 ChatFlow. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="{% static 'js/home/home.js' %}"></script>
+  </body>
+</html>

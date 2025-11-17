@@ -301,8 +301,8 @@ dmypy.json
 
 # Django Static and Media files
 staticfiles/
-media/
-static/
+# media/
+# static/
 
 # IDEs
 .vscode/

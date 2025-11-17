@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - ChatFlow</title>
+    <link rel="stylesheet" href="{% static 'css/auth/auth.css' %}" />
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="auth-left">
+        <div class="auth-brand">
+          <h1>ChatFlow</h1>
+          <p>Welcome back! Login to continue your conversations.</p>
+        </div>
+        <div class="auth-illustration">
+          <div class="floating-bubble bubble-1"></div>
+          <div class="floating-bubble bubble-2"></div>
+          <div class="floating-bubble bubble-3"></div>
+        </div>
+      </div>
+
+      <div class="auth-right">
+        <div class="auth-card">
+          <div class="auth-header">
+            <h2>Login to ChatFlow</h2>
+            <p>Enter your credentials to access your account</p>
+          </div>
+
+          {% if messages %}
+          <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <form
+            method="POST"
+            action="{% url 'login' %}"
+            class="auth-form"
+            id="loginForm"
+          >
+            {% csrf_token %}
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+
+            <div class="form-group">
+              <label for="{{ form.login.id_for_label }}">Username or Email</label>
+              <div class="input-wrapper">
+                <span class="input-icon">👤</span>
+                {{ form.login }}
+              </div>
+              {% if form.login.errors %}
+              <span class="error-message">{{ form.login.errors|first }}</span>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.password.id_for_label }}">Password</label>
+              <div class="input-wrapper">
+                <span class="input-icon">🔒</span>
+                {{ form.password }}
+                <span class="toggle-password" id="togglePassword">👁️</span>
+              </div>
+              {% if form.password.errors %}
+              <span class="error-message">{{ form.password.errors|first }}</span>
+              {% endif %}
+            </div>
+
+            <div class="form-options">
+              {% if has_remember_field %}
+              <label class="checkbox-label">
+                {{ form.remember }}
+                <span>Remember me</span>
+              </label>
+              {% endif %}
+              <a href="{% url 'account_reset_password' %}" class="forgot-link">Forgot Password?</a>
+            </div>
+
+            {% if form.non_field_errors %}
+            <div class="error-message">
+              {{ form.non_field_errors|first }}
+            </div>
+            {% endif %}
+
+            <button type="submit" class="btn-submit">
+              <span class="btn-text">Login</span>
+              <span class="btn-loader"></span>
+            </button>
+          </form>
+
+          <div class="auth-divider">
+            <span>OR</span>
+          </div>
+
+          <div class="social-login">
+            <button class="social-btn google-btn">
+              <span class="social-icon">G</span>
+              Continue with Google
+            </button>
+            <button class="social-btn github-btn">
+              <span class="social-icon">⚡</span>
+              Continue with GitHub
+            </button>
+          </div>
+
+          <div class="auth-footer">
+            <p>
+              Don't have an account? <a href="{% url 'register' %}">Sign up</a>
+            </p>
+          </div>
+        </div>
+
+        <div class="back-home">
+          <a href="{% url 'home' %}">← Back to Home</a>
+        </div>
+      </div>
+    </div>
+
+    <script src="{% static 'js/auth/auth.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,318 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - ChatFlow</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard/dashboard.css' %}" />
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <h1 class="sidebar-brand">ChatFlow</h1>
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+
+        <div class="user-profile">
+          <div class="user-avatar">
+            <img
+              src="{% static 'images/default-avatar.png' %}"
+              alt="User Avatar"
+              id="userAvatar"
+            />
+            <span class="status-indicator online"></span>
+          </div>
+          <div class="user-info">
+            <h3>{{ user.get_full_name|default:user.username }}</h3>
+            <p>@{{ user.username }}</p>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a href="#" class="nav-item active">
+            <span class="nav-icon">💬</span>
+            <span class="nav-text">All Chats</span>
+            <span class="badge">5</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span class="nav-icon">👥</span>
+            <span class="nav-text">Groups</span>
+            <span class="badge">3</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span class="nav-icon">⭐</span>
+            <span class="nav-text">Favorites</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span class="nav-icon">📁</span>
+            <span class="nav-text">Archived</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-text">Settings</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <a href="{% url 'logout' %}" class="logout-btn">
+            <span class="nav-icon">🚪</span>
+            <span class="nav-text">Logout</span>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Chat List -->
+      <div class="chat-list" id="chatList">
+        <div class="chat-list-header">
+          <h2>Messages</h2>
+          <button class="btn-new-chat" id="newChatBtn">
+            <span>+</span> New Chat
+          </button>
+        </div>
+
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="Search conversations..."
+            id="searchInput"
+          />
+        </div>
+
+        <div class="chat-items" id="chatItems">
+          <!-- Chat items will be dynamically loaded -->
+          <div class="chat-item active" data-chat-id="1">
+            <div class="chat-avatar">
+              <img src="{% static 'images/default-avatar.png' %}" alt="User" />
+              <span class="status-dot online"></span>
+            </div>
+            <div class="chat-info">
+              <div class="chat-header">
+                <h4>Sarah Johnson</h4>
+                <span class="chat-time">2:30 PM</span>
+              </div>
+              <div class="chat-preview">
+                <p>Hey! How are you doing today? 👋</p>
+                <span class="unread-count">2</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-item" data-chat-id="2">
+            <div class="chat-avatar">
+              <img src="{% static 'images/default-avatar.png' %}" alt="User" />
+              <span class="status-dot"></span>
+            </div>
+            <div class="chat-info">
+              <div class="chat-header">
+                <h4>Project Team</h4>
+                <span class="chat-time">1:15 PM</span>
+              </div>
+              <div class="chat-preview">
+                <p>Mike: The deadline is tomorrow</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-item" data-chat-id="3">
+            <div class="chat-avatar">
+              <img src="{% static 'images/default-avatar.png' %}" alt="User" />
+              <span class="status-dot online"></span>
+            </div>
+            <div class="chat-info">
+              <div class="chat-header">
+                <h4>Alex Martinez</h4>
+                <span class="chat-time">Yesterday</span>
+              </div>
+              <div class="chat-preview">
+                <p>Thanks for your help!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Window -->
+      <div class="chat-window" id="chatWindow">
+        <div class="chat-window-header">
+          <div class="chat-user-info">
+            <div class="chat-user-avatar">
+              <img src="{% static 'images/default-avatar.png' %}" alt="User" />
+              <span class="status-dot online"></span>
+            </div>
+            <div class="chat-user-details">
+              <h3>Sarah Johnson</h3>
+              <span class="user-status">Active now</span>
+            </div>
+          </div>
+          <div class="chat-actions">
+            <button class="action-btn" title="Voice Call">📞</button>
+            <button class="action-btn" title="Video Call">📹</button>
+            <button class="action-btn" title="Info">ℹ️</button>
+            <button class="action-btn mobile-back" id="mobileBack">←</button>
+          </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+          <!-- Messages will be dynamically loaded -->
+          <div class="message-date">
+            <span>Today</span>
+          </div>
+
+          <div class="message received">
+            <div class="message-avatar">
+              <img src="{% static 'images/default-avatar.png' %}" alt="User" />
+            </div>
+            <div class="message-content">
+              <div class="message-bubble">
+                <p>Hey! How are you doing today? 👋</p>
+              </div>
+              <span class="message-time">2:28 PM</span>
+            </div>
+          </div>
+
+          <div class="message sent">
+            <div class="message-content">
+              <div class="message-bubble">
+                <p>
+                  Hi Sarah! I'm doing great, thanks for asking! How about you?
+                </p>
+              </div>
+              <span class="message-time">2:29 PM</span>
+            </div>
+          </div>
+
+          <div class="message received">
+            <div class="message-avatar">
+              <img src="{% static 'images/default-avatar.png' %}" alt="User" />
+            </div>
+            <div class="message-content">
+              <div class="message-bubble">
+                <p>
+                  I'm good! Just wanted to check in and see if you're free for a
+                  meeting tomorrow?
+                </p>
+              </div>
+              <span class="message-time">2:30 PM</span>
+            </div>
+          </div>
+
+          <div
+            class="typing-indicator"
+            id="typingIndicator"
+            style="display: none"
+          >
+            <div class="message-avatar">
+              <img src="{% static 'images/default-avatar.png' %}" alt="User" />
+            </div>
+            <div class="typing-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-input-container">
+          <form class="chat-input-form" id="messageForm">
+            <button type="button" class="attach-btn" title="Attach File">
+              📎
+            </button>
+            <button type="button" class="emoji-btn" title="Emoji">😊</button>
+            <input
+              type="text"
+              placeholder="Type a message..."
+              id="messageInput"
+              autocomplete="off"
+            />
+            <button type="submit" class="send-btn" id="sendBtn">
+              <span class="send-icon">➤</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- User Info Panel (Right Sidebar) -->
+      <div class="user-info-panel" id="userInfoPanel">
+        <div class="info-panel-header">
+          <h3>Contact Info</h3>
+          <button class="close-panel" id="closePanel">✕</button>
+        </div>
+
+        <div class="info-panel-content">
+          <div class="info-user-avatar">
+            <img src="{% static 'images/default-avatar.png' %}" alt="User" />
+          </div>
+          <h2>Sarah Johnson</h2>
+          <p class="info-username">@sarahjohnson</p>
+          <p class="info-status">Active now</p>
+
+          <div class="info-section">
+            <h4>About</h4>
+            <p>Product Designer | Coffee Lover ☕</p>
+          </div>
+
+          <div class="info-section">
+            <h4>Media & Files</h4>
+            <div class="media-grid">
+              <div class="media-item">📷</div>
+              <div class="media-item">📄</div>
+              <div class="media-item">🎵</div>
+            </div>
+          </div>
+
+          <div class="info-actions">
+            <button class="info-action-btn">🔕 Mute</button>
+            <button class="info-action-btn">🚫 Block</button>
+            <button class="info-action-btn danger">🗑️ Delete Chat</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Chat Modal -->
+    <div class="modal" id="newChatModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>New Conversation</h3>
+          <button class="modal-close" id="closeModal">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input
+              type="text"
+              placeholder="Search users..."
+              id="userSearchInput"
+            />
+          </div>
+          <div class="user-list" id="userList">
+            <!-- User list will be dynamically loaded -->
+            <div class="user-item">
+              <div class="user-avatar">
+                <img
+                  src="{% static 'images/default-avatar.png' %}"
+                  alt="User"
+                />
+              </div>
+              <div class="user-details">
+                <h4>John Doe</h4>
+                <p>@johndoe</p>
+              </div>
+              <button class="btn-start-chat">Chat</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{% static 'js/dashboard/dashboard.js' %}"></script>
+  </body>
+</html>
