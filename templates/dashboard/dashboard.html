@@ -4,11 +4,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard - ChatFlow</title>
+    <title>{{ room.name }} - ChatFlow</title>
     <link rel="stylesheet" href="{% static 'css/dashboard/dashboard.css' %}" />
   </head>
   <body>
-    <div class="dashboard-container">
+    <div
+      class="dashboard-container"
+      id="chatRoomApp"
+      data-room-code="{{ room.code }}"
+      data-room-url="{{ room_url }}"
+      data-user-name="{{ request.user.get_full_name|default:request.user.username }}"
+      data-user-handle="{{ request.user.username }}"
+    >
       <!-- Sidebar -->
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -23,41 +30,31 @@
         <div class="user-profile">
           <div class="user-avatar">
             <img
-              src="{% static 'images/default-avatar.png' %}"
+              src="{% static 'images/default-avatar.svg' %}"
               alt="User Avatar"
               id="userAvatar"
             />
             <span class="status-indicator online"></span>
           </div>
           <div class="user-info">
-            <h3>{{ user.get_full_name|default:user.username }}</h3>
-            <p>@{{ user.username }}</p>
+            <h3>{{ request.user.get_full_name|default:request.user.username }}</h3>
+            <p>@{{ request.user.username }}</p>
           </div>
         </div>
 
         <nav class="sidebar-nav">
-          <a href="#" class="nav-item active">
-            <span class="nav-icon">💬</span>
-            <span class="nav-text">All Chats</span>
-            <span class="badge">5</span>
-          </a>
-          <a href="#" class="nav-item">
-            <span class="nav-icon">👥</span>
-            <span class="nav-text">Groups</span>
-            <span class="badge">3</span>
-          </a>
-          <a href="#" class="nav-item">
-            <span class="nav-icon">⭐</span>
-            <span class="nav-text">Favorites</span>
-          </a>
-          <a href="#" class="nav-item">
-            <span class="nav-icon">📁</span>
-            <span class="nav-text">Archived</span>
-          </a>
-          <a href="#" class="nav-item">
-            <span class="nav-icon">⚙️</span>
-            <span class="nav-text">Settings</span>
-          </a>
+          <div class="room-meta-group">
+            <p class="meta-label">Room</p>
+            <h2>{{ room.name }}</h2>
+            <p class="meta-value">Room ID: {{ room.code }}</p>
+            <p class="meta-hint">
+              Share <strong>{{ room.code }}</strong> plus the password to invite friends.
+            </p>
+            <button class="ghost-btn copy-btn" data-copy="{{ room_url }}" data-label="Copy invite link">
+              Copy invite link
+            </button>
+            <a class="text-link" href="{% url 'dashboard' %}">← Back to rooms</a>
+          </div>
         </nav>
 
         <div class="sidebar-footer">
@@ -68,74 +65,35 @@
         </div>
       </aside>
 
-      <!-- Chat List -->
+      <!-- Chat List / Members -->
       <div class="chat-list" id="chatList">
         <div class="chat-list-header">
-          <h2>Messages</h2>
-          <button class="btn-new-chat" id="newChatBtn">
-            <span>+</span> New Chat
-          </button>
+          <h2>Room members</h2>
+          <p class="members-count">{{ participants|length }} active</p>
         </div>
 
-        <div class="search-box">
-          <span class="search-icon">🔍</span>
-          <input
-            type="text"
-            placeholder="Search conversations..."
-            id="searchInput"
-          />
-        </div>
-
-        <div class="chat-items" id="chatItems">
-          <!-- Chat items will be dynamically loaded -->
-          <div class="chat-item active" data-chat-id="1">
+        <div class="chat-items" id="memberList">
+          {% for participant in participants %}
+          <div class="chat-item {% if participant.id == request.user.id %}active{% endif %}">
             <div class="chat-avatar">
-              <img src="{% static 'images/default-avatar.png' %}" alt="User" />
+              <img src="{% static 'images/default-avatar.svg' %}" alt="{{ participant.username }}" />
               <span class="status-dot online"></span>
             </div>
             <div class="chat-info">
               <div class="chat-header">
-                <h4>Sarah Johnson</h4>
-                <span class="chat-time">2:30 PM</span>
+                <h4>{{ participant.get_full_name|default:participant.username }}</h4>
+                {% if participant.id == room.owner_id %}
+                <span class="badge">Host</span>
+                {% endif %}
               </div>
               <div class="chat-preview">
-                <p>Hey! How are you doing today? 👋</p>
-                <span class="unread-count">2</span>
+                <p>@{{ participant.username }}</p>
               </div>
             </div>
           </div>
-
-          <div class="chat-item" data-chat-id="2">
-            <div class="chat-avatar">
-              <img src="{% static 'images/default-avatar.png' %}" alt="User" />
-              <span class="status-dot"></span>
-            </div>
-            <div class="chat-info">
-              <div class="chat-header">
-                <h4>Project Team</h4>
-                <span class="chat-time">1:15 PM</span>
-              </div>
-              <div class="chat-preview">
-                <p>Mike: The deadline is tomorrow</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="chat-item" data-chat-id="3">
-            <div class="chat-avatar">
-              <img src="{% static 'images/default-avatar.png' %}" alt="User" />
-              <span class="status-dot online"></span>
-            </div>
-            <div class="chat-info">
-              <div class="chat-header">
-                <h4>Alex Martinez</h4>
-                <span class="chat-time">Yesterday</span>
-              </div>
-              <div class="chat-preview">
-                <p>Thanks for your help!</p>
-              </div>
-            </div>
-          </div>
+          {% empty %}
+          <p class="empty-members">No one is here yet.</p>
+          {% endfor %}
         </div>
       </div>
 
@@ -144,73 +102,54 @@
         <div class="chat-window-header">
           <div class="chat-user-info">
             <div class="chat-user-avatar">
-              <img src="{% static 'images/default-avatar.png' %}" alt="User" />
+              <img src="{% static 'images/default-avatar.svg' %}" alt="Room" />
               <span class="status-dot online"></span>
             </div>
             <div class="chat-user-details">
-              <h3>Sarah Johnson</h3>
-              <span class="user-status">Active now</span>
+              <h3>{{ room.name }}</h3>
+              <span class="user-status">Secure room • {{ room.code }}</span>
             </div>
           </div>
           <div class="chat-actions">
-            <button class="action-btn" title="Voice Call">📞</button>
-            <button class="action-btn" title="Video Call">📹</button>
-            <button class="action-btn" title="Info">ℹ️</button>
+            <button class="ghost-btn copy-btn" data-copy="{{ room.code }}" data-label="Copy room ID">Copy room ID</button>
             <button class="action-btn mobile-back" id="mobileBack">←</button>
           </div>
         </div>
 
         <div class="chat-messages" id="chatMessages">
-          <!-- Messages will be dynamically loaded -->
+          {% if room_messages %}
+          {% regroup room_messages by created_at.date as date_list %}
+          {% for date_group in date_list %}
           <div class="message-date">
-            <span>Today</span>
+            <span>{{ date_group.grouper|date:"M d, Y" }}</span>
           </div>
-
-          <div class="message received">
+          {% for message in date_group.list %}
+          <div class="message {% if message.sender_id == request.user.id %}sent{% else %}received{% endif %}">
+            {% if message.sender_id != request.user.id %}
             <div class="message-avatar">
-              <img src="{% static 'images/default-avatar.png' %}" alt="User" />
+              <img src="{% static 'images/default-avatar.svg' %}" alt="{{ message.sender.username }}" />
             </div>
-            <div class="message-content">
-              <div class="message-bubble">
-                <p>Hey! How are you doing today? 👋</p>
-              </div>
-              <span class="message-time">2:28 PM</span>
-            </div>
-          </div>
-
-          <div class="message sent">
+            {% endif %}
             <div class="message-content">
               <div class="message-bubble">
                 <p>
-                  Hi Sarah! I'm doing great, thanks for asking! How about you?
+                  <strong>{{ message.sender.get_full_name|default:message.sender.username }}:</strong>
+                  {{ message.content }}
                 </p>
               </div>
-              <span class="message-time">2:29 PM</span>
+              <span class="message-time">{{ message.created_at|time:"H:i" }}</span>
             </div>
           </div>
-
-          <div class="message received">
-            <div class="message-avatar">
-              <img src="{% static 'images/default-avatar.png' %}" alt="User" />
-            </div>
-            <div class="message-content">
-              <div class="message-bubble">
-                <p>
-                  I'm good! Just wanted to check in and see if you're free for a
-                  meeting tomorrow?
-                </p>
-              </div>
-              <span class="message-time">2:30 PM</span>
-            </div>
+          {% endfor %}
+          {% endfor %}
+          {% else %}
+          <div class="message-date">
+            <span>Start chatting</span>
           </div>
-
-          <div
-            class="typing-indicator"
-            id="typingIndicator"
-            style="display: none"
-          >
+          {% endif %}
+          <div class="typing-indicator" id="typingIndicator" style="display: none">
             <div class="message-avatar">
-              <img src="{% static 'images/default-avatar.png' %}" alt="User" />
+              <img src="{% static 'images/default-avatar.svg' %}" alt="Typing" />
             </div>
             <div class="typing-dots">
               <span></span>
@@ -222,10 +161,6 @@
 
         <div class="chat-input-container">
           <form class="chat-input-form" id="messageForm">
-            <button type="button" class="attach-btn" title="Attach File">
-              📎
-            </button>
-            <button type="button" class="emoji-btn" title="Emoji">😊</button>
             <input
               type="text"
               placeholder="Type a message..."
@@ -238,81 +173,9 @@
           </form>
         </div>
       </div>
-
-      <!-- User Info Panel (Right Sidebar) -->
-      <div class="user-info-panel" id="userInfoPanel">
-        <div class="info-panel-header">
-          <h3>Contact Info</h3>
-          <button class="close-panel" id="closePanel">✕</button>
-        </div>
-
-        <div class="info-panel-content">
-          <div class="info-user-avatar">
-            <img src="{% static 'images/default-avatar.png' %}" alt="User" />
-          </div>
-          <h2>Sarah Johnson</h2>
-          <p class="info-username">@sarahjohnson</p>
-          <p class="info-status">Active now</p>
-
-          <div class="info-section">
-            <h4>About</h4>
-            <p>Product Designer | Coffee Lover ☕</p>
-          </div>
-
-          <div class="info-section">
-            <h4>Media & Files</h4>
-            <div class="media-grid">
-              <div class="media-item">📷</div>
-              <div class="media-item">📄</div>
-              <div class="media-item">🎵</div>
-            </div>
-          </div>
-
-          <div class="info-actions">
-            <button class="info-action-btn">🔕 Mute</button>
-            <button class="info-action-btn">🚫 Block</button>
-            <button class="info-action-btn danger">🗑️ Delete Chat</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- New Chat Modal -->
-    <div class="modal" id="newChatModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>New Conversation</h3>
-          <button class="modal-close" id="closeModal">✕</button>
-        </div>
-        <div class="modal-body">
-          <div class="search-box">
-            <span class="search-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Search users..."
-              id="userSearchInput"
-            />
-          </div>
-          <div class="user-list" id="userList">
-            <!-- User list will be dynamically loaded -->
-            <div class="user-item">
-              <div class="user-avatar">
-                <img
-                  src="{% static 'images/default-avatar.png' %}"
-                  alt="User"
-                />
-              </div>
-              <div class="user-details">
-                <h4>John Doe</h4>
-                <p>@johndoe</p>
-              </div>
-              <button class="btn-start-chat">Chat</button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <script src="{% static 'js/dashboard/dashboard.js' %}"></script>
   </body>
 </html>
+

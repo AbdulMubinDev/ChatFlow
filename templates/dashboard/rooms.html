@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Chat Rooms - ChatFlow</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard/rooms.css' %}" />
+  </head>
+  <body>
+    <div class="rooms-layout">
+      <header class="rooms-header">
+        <div>
+          <h1>ChatFlow Rooms</h1>
+          <p>Create secure rooms, invite people with a link, and chat in real-time.</p>
+        </div>
+        <div class="header-actions">
+          <a href="{% url 'logout' %}" class="text-link">Logout</a>
+          <a href="{% url 'home' %}" class="text-link muted">Back to home</a>
+        </div>
+      </header>
+
+      {% if messages %}
+      <div class="flash-messages">
+        {% for message in messages %}
+        <div class="flash flash-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <section class="forms-grid">
+        <div class="form-card">
+          <h2>Create a room</h2>
+          <p>Set a room name and password. Share the ID and password to invite people.</p>
+          <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="create-submit" value="1" />
+            {% if create_form.non_field_errors %}
+            <div class="form-errors">
+              {{ create_form.non_field_errors }}
+            </div>
+            {% endif %}
+            <div class="form-group">
+              <label for="{{ create_form.name.id_for_label }}">Room name</label>
+              {{ create_form.name }}
+              {{ create_form.name.errors }}
+            </div>
+            <div class="form-group">
+              <label for="{{ create_form.password.id_for_label }}">Password</label>
+              {{ create_form.password }}
+              {{ create_form.password.errors }}
+            </div>
+            <div class="form-group">
+              <label for="{{ create_form.confirm_password.id_for_label }}">Confirm password</label>
+              {{ create_form.confirm_password }}
+              {{ create_form.confirm_password.errors }}
+            </div>
+            <button type="submit" class="primary-btn">Create &amp; go to room</button>
+          </form>
+        </div>
+
+        <div class="form-card">
+          <h2>Join a room</h2>
+          <p>Use the Room ID and password shared with you to join instantly.</p>
+          <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="join-submit" value="1" />
+            {% if join_form.non_field_errors %}
+            <div class="form-errors">
+              {{ join_form.non_field_errors }}
+            </div>
+            {% endif %}
+            <div class="form-group">
+              <label for="{{ join_form.room_code.id_for_label }}">Room ID</label>
+              {{ join_form.room_code }}
+              {{ join_form.room_code.errors }}
+            </div>
+            <div class="form-group">
+              <label for="{{ join_form.password.id_for_label }}">Password</label>
+              {{ join_form.password }}
+              {{ join_form.password.errors }}
+            </div>
+            <button type="submit" class="secondary-btn">Join room</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="rooms-list">
+        <div class="rooms-list__header">
+          <h2>Your rooms</h2>
+          <p>Share the invite link or room ID + password with your friends or teammates.</p>
+        </div>
+
+        {% if rooms %}
+        <div class="rooms-grid">
+          {% for room in rooms %}
+          <article class="room-card">
+            <div class="room-card__header">
+              <div>
+                <h3>{{ room.name }}</h3>
+                <p>Created {{ room.created_at|date:"M d, Y" }}</p>
+              </div>
+              {% if room.owner_id == request.user.id %}
+              <span class="badge">Owner</span>
+              {% endif %}
+            </div>
+            <dl class="room-meta">
+              <div>
+                <dt>Room ID</dt>
+                <dd>{{ room.code }}</dd>
+              </div>
+              <div>
+                <dt>Members</dt>
+                <dd>{{ room.participant_total }}</dd>
+              </div>
+            </dl>
+            <div class="room-actions">
+              <button
+                class="ghost-btn copy-btn"
+                data-copy="{{ room.absolute_url }}"
+                data-label="Copy invite link"
+              >
+                Copy invite link
+              </button>
+              <a class="primary-btn" href="{% url 'room_detail' room.code %}">Open room</a>
+            </div>
+            <p class="hint">
+              Share the Room ID and password. The password is never shown here for security,
+              so be sure to remember it!
+            </p>
+          </article>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+          <img src="{% static 'images/default-avatar.svg' %}" alt="Start chatting" />
+          <h3>No rooms yet</h3>
+          <p>Create your first room above and invite people with the link.</p>
+        </div>
+        {% endif %}
+      </section>
+    </div>
+
+    <script src="{% static 'js/dashboard/rooms.js' %}"></script>
+  </body>
+</html>
+
